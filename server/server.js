@@ -1,22 +1,26 @@
-import express from "express"
-import cors from "cors"
-import 'dotenv/config'
-import cookieParser from "cookie-parser"
-import connectDB from './config/mongodb.js'
+import express from "express" // ye nodejs ka framework hai, ye routes banata hai and server banata hai
+import cors from "cors" // frontend aur backend se baat krne deta hai, kyuki usually browser block krta hai
+import 'dotenv/config' // .env file ke secrets load krta hai
+import cookieParser from "cookie-parser" // Request ke andar aane wali cookies ko readable banata hai. Auth system me JWT cookies ke liye must-have.
+import connectDB from './config/mongodb.js' // Ye MongoDB connect karne wala function import karta hai
+import authRouter from './routes/authRoute.js'
 
-const app = express();
-const port = process.env.PORT || 4000
+const app = express(); // Ye mera backend application hai, Sab middleware & routes isi ke andar rehte hain.
+const port = process.env.PORT || 4000 // port se connect kar raha hu
 
 
-app.use(express.json());
-app.use(cookieParser());
-app.use(cors({credentials: true}));
+app.use(express.json()); // ye mera middleware hai
+app.use(cookieParser()); // Cookies ko parse karta hai, Auth ke liye zaroori.
+app.use(cors({credentials: true})); // Cross-origin requests allow karta hai and credentials: true → cookies bhi allow
 
 connectDB();
 
+// API Endpoints => ek specific address (URL) + method jahan frontend jaa ke backend se kuch kaam karwata hai.
+// METHOD  +  URL  =  API Endpoint (POST /api/auth/login)
 
-app.get('/', (req, res) => {
-  res.send("API is Working Fine");
-});
+app.get('/', (req, res) => {res.send("API is Working Fine");});
+app.use('/api/auth', authRouter);
+
+
 
 app.listen(port, () => console.log(`Server started on PORT: ${port} 🚀`));

@@ -1,0 +1,117 @@
+
+
+
++------+-------------------------------+-------------------------------+
+| Code | Category                      | Kab Use Hota Hai               |
+⁡⁢⁢⁢+------+-------------------------------+-------------------------------+
+| 200  | OK (Success)                  | Normal success (GET, Login)   |
+| 201  | Created                       | New resource created (Signup) |
+| 202  | Accepted                      | Request accepted, processing  |
+| 204  | No Content                    | Success, but no response body |
++------+-------------------------------+-------------------------------+⁡
+⁡⁢⁣⁣| 400  | Bad Request                   | Missing / invalid input       |
+| 401  | Unauthorized                  | Login required / token missing|
+| 403  | Forbidden                     | No permission (logged in)     |
+| 404  | Not Found                     | Route / resource not found    |
+| 409  | Conflict                      | Already exists (email, data)  |
+| 422  | Unprocessable Entity          | Validation failed             |
++------+-------------------------------+-------------------------------+⁡
+⁡⁢⁣⁢| 500  | Internal Server Error          | Server crash / DB error       |
+| 502  | Bad Gateway                   | Upstream server issue         |
+| 503  | Service Unavailable            | Server temporarily down       |
++------+-------------------------------+-------------------------------+⁡
+
+2xx → Sab sahi ✅
+4xx → User ne galti ki ❌
+5xx → Backend ne hag diya 💥
+
+⁡⁣⁣⁢Flow visual of how the project is going to work⁡
+
+Frontend
+   ↓
+POST /api/auth/login
+   ↓
+server.js → app.use('/api/auth', authRouter)
+   ↓
+authRoute.js → router.post('/login', login)
+   ↓
+authController.js → login()
+   ↓
+Response
+
+
+⁡⁢⁣⁣Routes decide “kahan jana hai”, Controllers decide “kya karna hai”.⁡
+
+
+⁡⁣⁢⁣Way to make a clean structure of your project⁡
+
+server/
+ ├── routes/
+ │    ├── authRoute.js      → login, register, logout
+ │    ├── userRoute.js      → profile, update profile
+ │    └── adminRoute.js     → admin-only actions
+ │
+ ├── controllers/
+ │    ├── authController.js
+ │    ├── userController.js
+ │    └── adminController.js
+ │
+ ├── middleware/
+ │    └── authMiddleware.js
+ │
+ └── server.js
+
+
+
+
+
+Workflow diagram of my project
+
+
+          FRONTEND (React)
+                │
+                │  (email, password)
+                ▼
+        POST /api/auth/login
+                │
+                ▼
+           server.js
+                │
+                ▼
+         authRoute.js
+                │
+                ▼
+     loginController.js
+  (verify user → generate JWT)
+                │
+                ▼
+     Set cookie "token" in browser
+                │
+                ▼
+====== USER LOGGED IN =======
+
+ User opens profile page
+                │
+                ▼
+ GET /api/user/profile
+ (browser sends cookie automatically)
+                │
+                ▼
+          userAuth middleware
+   (extract token → verify → req.userId)
+                │
+        if invalid → 401 Unauthorized
+                │
+                ▼
+        profileController.js
+    (findById(req.userId) in database)
+                │
+                ▼
+           MongoDB Database
+ (users collection → find user document)
+                │
+                ▼
+         Return JSON response
+                │
+                ▼
+          FRONTEND UI updates
