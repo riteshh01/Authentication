@@ -182,7 +182,8 @@ export const logout = async (req, res) => {
 // Send Verification OTP to the User's Email
 export const sendVerifyOtp = async (req, res) => {
   try {
-    const { userId } = req.body; // JWT token ko verify karke server khud userId nikalta hai and for that I have to make middleware (authMiddleware) jo jwt ko verify kare
+    // const { userId } = req.body;
+    const userId = req.user.id; // JWT token ko verify karke server khud userId nikalta hai and for that I have to make middleware (authMiddleware) jo jwt ko verify kare
 
     // Check user exists
     const user = await userModel.findById(userId);
@@ -251,63 +252,57 @@ export const sendVerifyOtp = async (req, res) => {
 };
 
 
-
 export const verifyEmail = async (req, res) => {
-    const{userId, otp} = req.body;
+  try {
+    const { otp } = req.body;
+    const userId = req.user.id;
 
-    if(!userId || !otp){
-        return res.status(400).json({
-            success: false,
-            message: "Missing Details",
-            error: error.message
-        });
+    if (!otp) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP is required"
+      });
     }
 
+    const user = await userModel.findById(userId);
 
-    try {
-      const user = await userModel.findById(userId);
-      
-        if(!user){
-            return res.status(400).json({
-               success: false,
-               message: "User not Found",
-               error: error.message
-            })
-        }
-
-        if(user.verifyOtp === '' || user.verifyOtp != otp){
-            return res.status().json({
-                success: false,
-                message: "Invalid Otp",
-                error: error.message
-            })
-        }
-
-        if(user.verifyOtpExpireAt < Date.now()){
-            return res.status(500).json({
-                success: false,
-                message: "Otp Expired",
-                error: error.message
-            })
-        }
-
-        user.isAccountVerified = true;
-        user.verifyOtp = '';
-        user.verifyOtpExpireAt = 0;
-
-        await user.save();
-            return res.status(200).json({
-                success: true,
-                message: "Email Verified Successfully",
-                error: error.message
-            })
-
-
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Something Went Wrong",
-            error: error.message
-        });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
     }
-}
+
+    if (!user.verifyOtp || user.verifyOtp !== otp) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid OTP"
+      });
+    }
+
+    if (user.verifyOtpExpireAt < Date.now()) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP expired"
+      });
+    }
+
+    user.isAccountVerified = true;
+    user.verifyOtp = "";
+    user.verifyOtpExpireAt = 0;
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Email verified successfully"
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: error.message
+    });
+  }
+};

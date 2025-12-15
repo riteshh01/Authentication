@@ -19,7 +19,7 @@ connectDB();
 // METHOD  +  URL  =  API Endpoint (POST /api/auth/login)
 
 app.get('/', (req, res) => {res.send("API is Working Fine");});
-app.use('/api/auth', authRouter);
+app.use('/api/auth', authRouter); // it means ye route user related kaam karega
 
 
 
