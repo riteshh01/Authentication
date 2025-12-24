@@ -19,8 +19,8 @@ connectDB();
 // METHOD  +  URL  =  API Endpoint (POST /api/auth/login)
 
 app.get('/', (req, res) => {res.send("API is Working Fine");});
-app.use('/api/auth', authRouter); // it means ye route user related kaam karega
-
+app.use('/api/auth', authRouter); // it means ye route user ke authentication se related kaam karega
+app.use('/api/user', userRouter); // it means ye route user ke related kaam karega
 
 
 app.listen(port, () => console.log(`Server started on PORT: ${port} 🚀`));
