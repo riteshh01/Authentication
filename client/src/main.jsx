@@ -4,6 +4,12 @@ import './index.css'
 import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
 import { AppContextProvider } from './context/AppContext.jsx'
+import axios from 'axios'
+
+
+// 🔥 AXIOS GLOBAL CONFIG (YAHI ADD KAR)
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = "http://localhost:4000";
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>

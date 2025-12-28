@@ -183,7 +183,7 @@ export const logout = async (req, res) => {
 export const sendVerifyOtp = async (req, res) => {
   try {
     // const { userId } = req.body;
-    const userId = req.user.id; // JWT token ko verify karke server khud userId nikalta hai and for that I have to make middleware (authMiddleware) jo jwt ko verify kare
+    const userId  = req.user.id; // JWT token ko verify karke server khud userId nikalta hai and for that I have to make middleware (authMiddleware) jo jwt ko verify kare
 
     // Check user exists
     const user = await userModel.findById(userId);

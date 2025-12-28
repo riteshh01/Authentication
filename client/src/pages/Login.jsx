@@ -13,7 +13,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const { backendUrl, setIsLoggedIn } = useContext(AppContent)
+  const { backendUrl, setIsLoggedIn, getUserData } = useContext(AppContent)
   const navigate = useNavigate();
 
   const onSubmitHandler = async (e) => {
@@ -33,9 +33,10 @@ const Login = () => {
         if (data.success) {
           toast.success('Account created successfully');
           setIsLoggedIn(true);
+          // getUserData();
           navigate('/');
         } else {
-          toast.error(data.message);
+          toast.error(error.message);
         }
       } else {
         const { data } = await axios.post(backendUrl + '/api/auth/login', { email, password })
@@ -43,10 +44,11 @@ const Login = () => {
         if (data.success) {
           toast.success('Account Login Successfully');
           setIsLoggedIn(true)
+          // getUserData();
           navigate('/')
         }
         else {
-          toast.error(data.message);
+          toast.error(error.message);
         }
       }
 
@@ -121,7 +123,7 @@ const Login = () => {
 
           <button
             type="submit"
-            className="w-full bg-linear-to-r from-blue-500 to-indigo-500 
+            className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 
               text-white py-3 rounded-lg font-semibold
               hover:from-blue-600 hover:to-indigo-600"
             >
