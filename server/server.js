@@ -9,13 +9,8 @@ import userRouter from './routes/userRoute.js'
 const app = express(); // Ye mera backend application hai, Sab middleware & routes isi ke andar rehte hain.
 const port = process.env.PORT || 4000 // port se connect kar raha hu
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://authentication-frontend-zcls.onrender.com"
-];
-
 const corsOptions = {
-  origin: allowedOrigins,
+  origin: "https://authentication-frontend-zcls.onrender.com",
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
@@ -25,7 +20,7 @@ app.use(express.json()); // ye mera middleware hai
 app.use(cookieParser()); // Cookies ko parse karta hai, Auth ke liye zaroori.
 
 app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
+app.options("/*", cors(corsOptions));
 
 connectDB();
 
