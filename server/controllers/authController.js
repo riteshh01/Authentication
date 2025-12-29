@@ -206,7 +206,7 @@ export const logout = async (req, res) => {
 export const sendVerifyOtp = async (req, res) => {
   try {
     // const { userId } = req.body;
-    const userId  = req.user.id; // JWT token ko verify karke server khud userId nikalta hai and for that I have to make middleware (authMiddleware) jo jwt ko verify kare
+    const userId = req.userId; // JWT token ko verify karke server khud userId nikalta hai and for that I have to make middleware (authMiddleware) jo jwt ko verify kare
 
     // Check user exists
     const user = await userModel.findById(userId);
@@ -339,18 +339,30 @@ export const verifyEmail = async (req, res) => {
 
 
 export const isAuthenticated = async (req, res) => {
-  console.log("COOKIES:", req.cookies);
   try {
-      return res.status(200).json({
+    const user = await userModel.findById(req.userId);
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Not authenticated"
+      });
+    }
+
+    return res.status(200).json({
       success: true,
-      message: "Authentication Successfull"
+      isVerified: user.isAccountVerified,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email
+      }
     });
 
   } catch (error) {
-    return res.status(500).json({
+    return res.status(401).json({
       success: false,
-      message: "Something went wrong",
-      error: error.message
+      message: "Not authenticated"
     });
   }
 }
