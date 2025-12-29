@@ -20,7 +20,6 @@ app.use(express.json()); // ye mera middleware hai
 app.use(cookieParser()); // Cookies ko parse karta hai, Auth ke liye zaroori.
 
 app.use(cors(corsOptions));
-app.options("/*", cors(corsOptions));
 
 connectDB();
 
