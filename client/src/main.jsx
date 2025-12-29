@@ -12,9 +12,9 @@ axios.defaults.withCredentials = true;
 axios.defaults.baseURL = "http://localhost:4000";
 
 createRoot(document.getElementById('root')).render(
-  <BrowserRouter>
-      <AppContextProvider>
-          <App />
-      </AppContextProvider>
-  </BrowserRouter>,
+  <AppContextProvider>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </AppContextProvider>
 )

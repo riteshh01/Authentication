@@ -37,6 +37,29 @@ export const register = async (req, res) => {
     const user = new userModel({ name, email, password: hashedPassword });
     await user.save(); // user ko save karna database me
 
+    // 🔐 Generate verification OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    user.verifyOtp = otp;
+    user.verifyOtpExpireAt = Date.now() + 5 * 60 * 1000; // 5 minutes
+    await user.save();
+
+    const otpMailOption = {
+      from: process.env.SENDER_EMAIL,
+      to: email,
+      subject: "Verify Your Account (OTP)",
+      html: `
+        <div style="font-family: Arial, sans-serif; padding: 20px;">
+          <h2>Verify Your Account</h2>
+          <p>Your verification OTP is:</p>
+          <h1 style="letter-spacing: 4px;">${otp}</h1>
+          <p>This OTP is valid for 5 minutes.</p>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(otpMailOption);
+
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     res.cookie('token', token, {

@@ -13,7 +13,14 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const { backendUrl, setIsLoggedIn, getUserData } = useContext(AppContent)
+  const context = useContext(AppContent);
+
+  if (!context) {
+    console.log("Login is outside AppContextProvider");
+    return null;
+  }
+
+  const { backendUrl, setIsLoggedIn, getUserData } = context;
   const navigate = useNavigate();
 
   const onSubmitHandler = async (e) => {
@@ -31,24 +38,22 @@ const Login = () => {
         );
 
         if (data.success) {
-          toast.success('Account created successfully');
-          setIsLoggedIn(true);
-          // getUserData();
-          navigate('/');
+          toast.success('OTP sent to your email');
+          navigate('/email-verify');
         } else {
-          toast.error(error.message);
+          toast.error(data.message);
         }
       } else {
         const { data } = await axios.post(backendUrl + '/api/auth/login', { email, password })
 
         if (data.success) {
           toast.success('Account Login Successfully');
-          setIsLoggedIn(true)
-          // getUserData();
-          navigate('/')
+          setIsLoggedIn(true);
+          await getUserData();        // 🔑 fetch user details for navbar
+          navigate('/');
         }
         else {
-          toast.error(error.message);
+          toast.error(data.message);
         }
       }
 

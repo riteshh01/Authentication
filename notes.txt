@@ -115,3 +115,19 @@ Workflow diagram of my project
                 │
                 ▼
           FRONTEND UI updates
+
+
+
+
+
+
+
+Register (name + email + password)
+        ↓
+OTP automatically sent to email
+        ↓
+Verify Account screen (OTP input)
+        ↓
+OTP correct → account verified
+        ↓
+Login allowed
