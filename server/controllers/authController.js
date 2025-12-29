@@ -35,9 +35,9 @@ export const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = new userModel({ name, email, password: hashedPassword });
-    await user.save(); // user ko save karna database me
+    await user.save(); // user ko save karna hai db me
 
-    // 🔐 Generate verification OTP
+    // Generate verification OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     user.verifyOtp = otp;
@@ -65,7 +65,7 @@ export const register = async (req, res) => {
     res.cookie('token', token, {
       httpOnly: true, // because of this is cookie ko sirf server padh skta hai, browser ki javascript nhi, isse ham XSS attack se bach skte hai
       secure: process.env.NODE_ENV === 'production', // cookie sirf https pe chalegi production me and localhost hai to kisi pe chal jayegi
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',  // Cookie sirf tabhi bhejo jab user tumhari hi site par ho.
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',  // Cookie sirf tabhi bhejo jab user tumhari hi site par ho.
       maxAge: 7 * 24 * 60 * 60 * 1000  // days => hours => minutes => seconds => mili seconds
     })
 
@@ -155,7 +155,7 @@ export const login = async (req, res) => {
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000
     })
 
@@ -278,7 +278,14 @@ export const sendVerifyOtp = async (req, res) => {
 export const verifyEmail = async (req, res) => {
   try {
     const { otp } = req.body;
-    const userId = req.user.id;
+    const userId = req.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Not authorized. Please login again."
+      });
+    }
 
     if (!otp) {
       return res.status(400).json({
@@ -332,6 +339,7 @@ export const verifyEmail = async (req, res) => {
 
 
 export const isAuthenticated = async (req, res) => {
+  console.log("COOKIES:", req.cookies);
   try {
       return res.status(200).json({
       success: true,
@@ -410,16 +418,16 @@ export const sendResetOtp = async (req, res) => {
 
 // Reset User Password
 export const resetPassword = async (req, res) => {
-  const { email, otp, newPassword } = req.body;
+  const { email, otp, password } = req.body;
 
-  if (!email || !otp || !newPassword) {
+  if (!email || !otp || !password) {
     return res.status(400).json({
       success: false,
       message: "Email, OTP, and new password are required"
     });
   }
 
-  if (newPassword.length < 8) {
+  if (password.length < 8) {
     return res.status(400).json({
       success: false,
       message: "Password must be at least 8 characters long"
@@ -450,7 +458,7 @@ export const resetPassword = async (req, res) => {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     user.password = hashedPassword;
     user.resetOtp = "";

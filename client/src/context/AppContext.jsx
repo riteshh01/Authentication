@@ -1,6 +1,5 @@
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
-import { toast } from 'react-toastify';
 
 
 export const AppContent = createContext();
@@ -14,18 +13,29 @@ export const AppContextProvider = ({ children }) => {
 
     const getAuthState = async () => {
         try {
-           const { data } = await axios.get(backendUrl + '/api/auth/is-auth');
+           const { data } = await axios.get(
+            backendUrl + '/api/auth/is-auth',
+            { withCredentials: true }
+            );
            if (data.success) {
             setIsLoggedIn(true);
            } 
         } catch (error) {
-            toast.error(error.message);
+            if (error.response?.status === 401) {
+                // User not logged in — this is NORMAL
+                setIsLoggedIn(false);
+            } else {
+                console.error("Auth check failed:", error);
+            }
         }
     }
 
     const getUserData = async () => {
         try {
-            const {data} = await axios.get(backendUrl + '/api/user/data')
+            const {data} = await axios.get(
+                backendUrl + '/api/user/data',
+                { withCredentials: true }
+                );
             if (data.success) {
               setUserData(data.userData);
             } else {
