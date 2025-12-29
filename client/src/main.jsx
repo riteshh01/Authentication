@@ -9,7 +9,7 @@ import axios from 'axios'
 
 // 🔥 AXIOS GLOBAL CONFIG (YAHI ADD KAR)
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = "http://localhost:4000";
+axios.defaults.baseURL = "https://authentication-backend-11wg.onrender.com";
 
 createRoot(document.getElementById('root')).render(
   <AppContextProvider>

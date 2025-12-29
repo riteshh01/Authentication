@@ -9,7 +9,10 @@ import userRouter from './routes/userRoute.js'
 const app = express(); // Ye mera backend application hai, Sab middleware & routes isi ke andar rehte hain.
 const port = process.env.PORT || 4000 // port se connect kar raha hu
 
-const allowedOrigins = ['http://localhost:5173']
+const allowedOrigins = [
+  "http://localhost:5173",
+];
+
 
 app.use(express.json()); // ye mera middleware hai
 app.use(cookieParser()); // Cookies ko parse karta hai, Auth ke liye zaroori.
