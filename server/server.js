@@ -11,12 +11,30 @@ const port = process.env.PORT || 4000 // port se connect kar raha hu
 
 const allowedOrigins = [
   "http://localhost:5173",
+  "https://authentication-frontend-zcls.onrender.com"
 ];
 
 
 app.use(express.json()); // ye mera middleware hai
 app.use(cookieParser()); // Cookies ko parse karta hai, Auth ke liye zaroori.
-app.use(cors({origin: allowedOrigins, credentials: true})); // Cross-origin requests allow karta hai and credentials: true → cookies bhi allow
+// app.use(cors({origin: allowedOrigins, credentials: true})); // Cross-origin requests allow karta hai and credentials: true → cookies bhi allow
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (Postman, curl, server-to-server)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+app.options("*", cors());
 
 connectDB();
 
