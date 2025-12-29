@@ -1,5 +1,4 @@
 
-import { response } from "express";
 import bcrypt from 'bcryptjs';
 import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
@@ -66,7 +65,11 @@ export const register = async (req, res) => {
       `
     };
 
-    await transporter.sendMail(otpMailOption);
+    try {
+      await transporter.sendMail(otpMailOption);
+    } catch (err) {
+      console.log("OTP mail failed:", err.message);
+    }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
@@ -101,7 +104,11 @@ export const register = async (req, res) => {
             `
     };
 
-    await transporter.sendMail(mailOptions);
+    try {
+      await transporter.sendMail(mailOptions);
+    } catch (err) {
+      console.log("Welcome mail failed:", err.message);
+    }
 
     return res.status(201).json({
       success: true,
@@ -198,7 +205,7 @@ export const logout = async (req, res) => {
 export const sendVerifyOtp = async (req, res) => {
   try {
     // const { userId } = req.body;
-    const userId  = req.user.id; // JWT token ko verify karke server khud userId nikalta hai and for that I have to make middleware (authMiddleware) jo jwt ko verify kare
+    const userId = req.userId; // JWT token ko verify karke server khud userId nikalta hai and for that I have to make middleware (authMiddleware) jo jwt ko verify kare
 
     // Check user exists
     const user = await userModel.findById(userId);
