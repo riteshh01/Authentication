@@ -117,7 +117,7 @@ const Login = () => {
           {state === 'Login' && (
             <div className="text-right">
               <button
-                onClick={() => navigate('/reset-password')}
+                onClick={() => navigate('/forgot-password')}
                 type="button"
                 className="text-sm text-blue-400 hover:underline"
               >
