@@ -21,9 +21,9 @@
 | 503  | Service Unavailable            | Server temporarily down       |
 +------+-------------------------------+-------------------------------+⁡
 
-2xx → Sab sahi ✅
-4xx → User ne galti ki ❌
-5xx → Backend ne hag diya 💥
+2xx → Sab sahi 
+4xx → User ne galti ki 
+5xx → Backend ne hag diya 
 
 ⁡⁣⁣⁢Flow visual of how the project is going to work⁡
 
@@ -88,7 +88,7 @@ Workflow diagram of my project
      Set cookie "token" in browser
                 │
                 ▼
-====== USER LOGGED IN =======
+         USER LOGGED IN 
 
  User opens profile page
                 │

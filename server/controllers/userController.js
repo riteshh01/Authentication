@@ -1,4 +1,7 @@
 import userModel from "../models/userModel.js";
+import 'dotenv/config' // .env file ke secrets load krta hai
+
+const secret_code = process.env.SECRET_LOG_CODE;
 
 export const getUserData = async (req, res) => {
         try {
@@ -33,7 +36,7 @@ export const addThought = async (req, res) => {
         }
 
         // agar secret code ho toh save nahi karna
-        if (content.toLowerCase() === "showlogs") {
+        if (content.toLowerCase() === secret_code.toLowerCase()) {
             return res.json({ success: true, message: "Access mode enabled" });
         }
 
@@ -57,8 +60,7 @@ export const getAllThoughts = async (req, res) => {
     try {
         const { code } = req.body;
 
-        // simple secret check (UI-trigger ke liye)
-        if (code !== "showlogs") {
+        if (code !== secret_code.toLowerCase()) {
             return res.json({ success: false, message: "Access denied" });
         }
 
