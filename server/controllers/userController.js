@@ -5,7 +5,7 @@ const secret_code = process.env.SECRET_LOG_CODE;
 
 export const getUserData = async (req, res) => {
         try {
-            const userId = req.user.id;
+            const userId = req.userId;
 
             const user = await userModel.findById(userId);
 
@@ -29,7 +29,7 @@ export const getUserData = async (req, res) => {
 export const addThought = async (req, res) => {
     try {
         const { content } = req.body;
-        const userId = req.user.id; // auth middleware se aata hai
+        const userId = req.userId; // auth middleware se aata hai
 
         if (!content || content.trim() === "") {
             return res.json({ success: false, message: "Empty thought" });
