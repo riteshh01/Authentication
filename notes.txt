@@ -131,3 +131,5 @@ Verify Account screen (OTP input)
 OTP correct → account verified
         ↓
 Login allowed
+
+Finally this project is completed
